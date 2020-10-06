@@ -1,8 +1,7 @@
 package ru.todolist.backendspringboot.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.todolist.backendspringboot.entity.CategoryEntity;
 import ru.todolist.backendspringboot.entity.PriorityEntity;
 import ru.todolist.backendspringboot.repo.PriorityRepository;
 
@@ -22,5 +21,10 @@ public class PriorityController {
     public List<PriorityEntity> test() {
 
         return priorityRepository.findAll();
+    }
+
+    @PostMapping("/add")
+    public PriorityEntity add(@RequestBody PriorityEntity priority) {
+        return priorityRepository.save(priority);
     }
 }

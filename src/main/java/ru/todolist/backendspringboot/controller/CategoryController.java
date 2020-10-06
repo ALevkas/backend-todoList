@@ -1,8 +1,6 @@
 package ru.todolist.backendspringboot.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.todolist.backendspringboot.entity.CategoryEntity;
 import ru.todolist.backendspringboot.repo.CategoryRepository;
 
@@ -22,5 +20,10 @@ public class CategoryController {
     public List<CategoryEntity> test() {
 
         return  categoryRepository.findAll();
+    }
+
+    @PostMapping("/add")
+    public CategoryEntity add(@RequestBody CategoryEntity category) {
+        return categoryRepository.save(category);
     }
 }

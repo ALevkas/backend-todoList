@@ -1,12 +1,14 @@
 package ru.todolist.backendspringboot.controller;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.todolist.backendspringboot.entity.CategoryEntity;
 import ru.todolist.backendspringboot.entity.PriorityEntity;
 import ru.todolist.backendspringboot.repo.CategoryRepository;
+import ru.todolist.backendspringboot.search.CategorySearchValues;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,10 +23,10 @@ public class CategoryController {
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/test")
-    public List<CategoryEntity> test() {
+    @GetMapping("/all")
+    public List<CategoryEntity> findAll() {
 
-        return  categoryRepository.findAll();
+        return  categoryRepository.findAllByOrderByIdAsc();
     }
 
     @PostMapping("/add")
@@ -83,5 +85,11 @@ public class CategoryController {
         }
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<CategoryEntity>> search(@RequestBody CategorySearchValues categorySearchValues) {
+
+        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
     }
 }

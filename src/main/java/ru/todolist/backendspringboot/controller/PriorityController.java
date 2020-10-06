@@ -4,8 +4,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.todolist.backendspringboot.entity.CategoryEntity;
 import ru.todolist.backendspringboot.entity.PriorityEntity;
 import ru.todolist.backendspringboot.repo.PriorityRepository;
+import ru.todolist.backendspringboot.search.CategorySearchValues;
+import ru.todolist.backendspringboot.search.PrioritySearchValues;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,10 +23,10 @@ public class PriorityController {
         this.priorityRepository = priorityRepository;
     }
 
-    @GetMapping("/test")
-    public List<PriorityEntity> test() {
+    @GetMapping("/all")
+    public List<PriorityEntity> findAll() {
 
-        return priorityRepository.findAll();
+        return priorityRepository.findAllByOrderByIdAsc();
     }
 
     @PostMapping("/add")
@@ -90,5 +93,11 @@ public class PriorityController {
         }
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<PriorityEntity>> search(@RequestBody PrioritySearchValues prioritySearchValues) {
+
+        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
     }
 }

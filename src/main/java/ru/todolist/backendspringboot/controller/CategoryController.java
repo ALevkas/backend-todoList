@@ -9,6 +9,7 @@ import ru.todolist.backendspringboot.entity.CategoryEntity;
 import ru.todolist.backendspringboot.entity.PriorityEntity;
 import ru.todolist.backendspringboot.repo.CategoryRepository;
 import ru.todolist.backendspringboot.search.CategorySearchValues;
+import ru.todolist.backendspringboot.services.CategoryService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,16 +18,16 @@ import java.util.NoSuchElementException;
 @RequestMapping("/category")
 public class CategoryController {
 
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/all")
     public List<CategoryEntity> findAll() {
 
-        return  categoryRepository.findAllByOrderByIdAsc();
+        return  categoryService.findAll();
     }
 
     @PostMapping("/add")
@@ -40,11 +41,11 @@ public class CategoryController {
             return new ResponseEntity("Error: title MUST NOT be null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryRepository.save(category));
+        return ResponseEntity.ok(categoryService.add(category));
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<CategoryEntity> edit(@RequestBody CategoryEntity category) {
+    public ResponseEntity edit(@RequestBody CategoryEntity category) {
 
         if (category.getId() == null && category.getId() == 0) {
             return new ResponseEntity("Error: id MUST NOT be null", HttpStatus.NOT_ACCEPTABLE);
@@ -53,8 +54,9 @@ public class CategoryController {
         if(category.getTitle() == null && category.getTitle().trim().length() == 0) {
             return new ResponseEntity("Error: title MUST NOT be null", HttpStatus.NOT_ACCEPTABLE);
         }
+        categoryService.update(category);
 
-        return ResponseEntity.ok(categoryRepository.save(category));
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
@@ -63,7 +65,7 @@ public class CategoryController {
         CategoryEntity category = null;
 
         try {
-            category = categoryRepository.findById(id).get();
+            category = categoryService.findById(id);
         }
         catch (NoSuchElementException e) {
             e.printStackTrace();
@@ -77,7 +79,7 @@ public class CategoryController {
     public ResponseEntity<CategoryEntity> deleteById(@PathVariable Long id) {
 
         try {
-            categoryRepository.deleteById(id);
+            categoryService.deleteById(id);
         }
         catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -90,6 +92,6 @@ public class CategoryController {
     @PostMapping("/search")
     public ResponseEntity<List<CategoryEntity>> search(@RequestBody CategorySearchValues categorySearchValues) {
 
-        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+        return ResponseEntity.ok(categoryService.findByTitle(categorySearchValues.getTitle()));
     }
 }

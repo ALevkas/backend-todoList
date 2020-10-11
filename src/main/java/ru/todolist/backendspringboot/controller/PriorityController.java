@@ -9,6 +9,8 @@ import ru.todolist.backendspringboot.entity.PriorityEntity;
 import ru.todolist.backendspringboot.repo.PriorityRepository;
 import ru.todolist.backendspringboot.search.CategorySearchValues;
 import ru.todolist.backendspringboot.search.PrioritySearchValues;
+import ru.todolist.backendspringboot.services.PriorityService;
+import ru.todolist.backendspringboot.services.StatService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,16 +19,16 @@ import java.util.NoSuchElementException;
 @RequestMapping("/priority")
 public class PriorityController {
 
-    private PriorityRepository  priorityRepository;
+    private PriorityService priorityService;
 
     public PriorityController(PriorityRepository priorityRepository) {
-        this.priorityRepository = priorityRepository;
+        this.priorityService = priorityService;
     }
 
     @GetMapping("/all")
     public List<PriorityEntity> findAll() {
 
-        return priorityRepository.findAllByOrderByIdAsc();
+        return priorityService.findAll();
     }
 
     @PostMapping("/add")
@@ -44,7 +46,7 @@ public class PriorityController {
             return new ResponseEntity("Error: color MUST NOT be null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.add(priority));
     }
 
     @PutMapping("/edit")
@@ -62,7 +64,7 @@ public class PriorityController {
             return new ResponseEntity("Error: color MUST NOT be null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.update(priority));
     }
 
     @GetMapping("/id/{id}")
@@ -71,7 +73,7 @@ public class PriorityController {
         PriorityEntity priority = null;
 
         try {
-            priority = priorityRepository.findById(id).get();
+            priority = priorityService.findById(id);
         }
         catch (NoSuchElementException e) {
             e.printStackTrace();
@@ -85,7 +87,7 @@ public class PriorityController {
     public ResponseEntity<PriorityEntity> deleteById(@PathVariable Long id) {
 
         try {
-            priorityRepository.deleteById(id);
+            priorityService.deleteById(id);
         }
         catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -98,6 +100,6 @@ public class PriorityController {
     @PostMapping("/search")
     public ResponseEntity<List<PriorityEntity>> search(@RequestBody PrioritySearchValues prioritySearchValues) {
 
-        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
+        return ResponseEntity.ok(priorityService.findByTitle(prioritySearchValues.getTitle()));
     }
 }

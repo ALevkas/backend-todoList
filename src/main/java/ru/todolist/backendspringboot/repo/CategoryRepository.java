@@ -12,6 +12,7 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
     List<CategoryEntity> findAllByOrderByIdAsc();
+    List<CategoryEntity> findAllByOrderByTitleAsc();
 
     @Query("SELECT c FROM CategoryEntity c WHERE " +
             "(:title is null or :title = '' or lower(c.title) like lower(concat('%', :title, '%') ) ) " +
